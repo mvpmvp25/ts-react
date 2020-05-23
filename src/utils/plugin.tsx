@@ -18,7 +18,7 @@ class loadPop {
     cb = cb || this.noop;
     this.popNum = this.popNum + 1;
     if (this.pop) {
-      //document.body.removeChild(this.pop);
+      // document.body.removeChild(this.pop);
       return;
     }
     this.pop = document.createElement("div");
@@ -63,7 +63,7 @@ class loginView {
   }
 
   init() {
-    let pageHtml =
+    const pageHtml =
       '<section id="loginPopup" class="none">' +
       '<div class="login-mask"></div>' +
       '<div class="login-content">' +
@@ -140,19 +140,17 @@ interface ModalConfirmStruct {
 
 export const modalView = {
   info: (param: ModalInfoStruct) => {
-    let options = Object.assign(
-      {
+    const options = {
         icon: <img src="/static/icon/notice-big.svg" />,
         okText: "確認",
         content: "",
-        onOk: () => {}
-      },
-      param
-    );
+        onOk: () => {},
+      ...param
+    };
     Modal.info({
       className: "g-bbt-alert",
       width: 400,
-      //title: options.content,
+      // title: options.content,
       icon: <span className="bbt-icon">{options.icon}</span>,
       okText: options.okText,
       content: options.content,
@@ -168,8 +166,7 @@ export const modalView = {
     if (modalView.isConfirm) {
       return;
     }
-    let options = Object.assign(
-      {
+    const options = {
         className: "g-bbt-confirm",
         iconType: "", // fail
         btnType: "",
@@ -179,10 +176,9 @@ export const modalView = {
         tips: "",
         onOk: () => {},
         cancelText: "cancel",
-        onCancel: () => {}
-      },
-      param
-    );
+        onCancel: () => {},
+      ...param
+    };
     let confirmClass = options.className;
     if (options.btnType == "hideOk" || options.btnType == "hideCancel") {
       confirmClass = options.className + " " + options.btnType;

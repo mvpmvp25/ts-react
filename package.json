@@ -5,7 +5,7 @@
   "main": "./src/index.ts",
   "scripts": {
     "start": "cross-env SERVER_TYPE=local webpack-dev-server --open",
-    "lint": "tslint -c ./tslint.json -p ./tsconfig.json",
+    "lint": "tslint -c ./tslint.json -p ./tsconfig.json --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

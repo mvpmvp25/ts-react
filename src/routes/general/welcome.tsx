@@ -12,8 +12,8 @@ interface StateStruct {
   searchData: object;
   page: number;
   age: number;
-  taskList: Array<string>; // string[]
-  list: Array<CardListRecordStruct>;
+  taskList: string[]; // string[]
+  list: CardListRecordStruct[];
 }
 
 const initState: StateStruct = {

@@ -6,15 +6,13 @@ interface CheckLoginStruct {
 }
 
 export const checkLogin = (param: CheckLoginStruct) => {
-  let options = Object.assign(
-    {
+  const options = {
       inLine: () => {},
-      offLine: () => {}
-    },
-    param
-  );
-  let tokenInfo = localStore.read({ name: "tokenInfo", none: {} });
-  let resData = { tokenInfo, hasToken: false };
+      offLine: () => {},
+    ...param
+  };
+  const tokenInfo = localStore.read({ name: "tokenInfo", none: {} });
+  const resData = { tokenInfo, hasToken: false };
   if (checkEmpty(tokenInfo)) {
     resData.hasToken = true;
     options.inLine(tokenInfo);

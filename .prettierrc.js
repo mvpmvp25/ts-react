@@ -1,9 +1,9 @@
 module.exports = {
   printWidth: 100, // 一行最多 100 字符
-  tabWidth: 2, // 使用 2 个空格用 2 个空缩进
+  tabWidth: 2 // 使用 2 个空格用 2 个空缩进
   // useTabs: false, // 不使用缩进符，而使用空格
   // semi: true, // 行尾需要有分号
-  singleQuote: true // 使用单引号
+  // singleQuote: true // 使用单引号
   // quoteProps: 'as-needed', // 对象的 key 仅在必要时用引号
   // jsxSingleQuote: false, // jsx 不使用单引号，而使用双引号
   // trailingComma: 'all', // 末尾需要逗号

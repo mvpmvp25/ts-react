@@ -25,7 +25,7 @@ function RouterConfig() {
               <Route
                 key={index}
                 path={item.path}
-                exact
+                exact={true}
                 component={item.component}
               />
             );

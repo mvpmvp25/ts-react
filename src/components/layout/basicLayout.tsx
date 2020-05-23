@@ -68,7 +68,7 @@ const MainLayout = (props: MainPropsStruct) => {
   }
   const selectMenu = (e: SelectMenuStruct) => {
     dispatch({ type: "save", payload: { selected: e.key } });
-    let routePath = e.key == appConfig.indexPath ? "/" : e.key;
+    const routePath = e.key == appConfig.indexPath ? "/" : e.key;
     pageView.go(routePath);
   };
 

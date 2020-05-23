@@ -1,4 +1,4 @@
-import React from "react"; //, { useState }
+import React from "react"; // , { useState }
 import PropTypes from "prop-types";
 import { Table, Divider } from "antd";
 import { propsBaseStruct } from "utils/tool";

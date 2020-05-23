@@ -28,12 +28,10 @@ export const checkEmpty = (data: any) => {
 
 // json格式轉換
 export const parseData = (param: object) => {
-  let options = Object.assign(
-    {
+  const options = {
       data: "",
-    },
-    param
-  );
+    ...param
+  };
   let resData = "";
   try {
     resData = JSON.parse(options.data);
@@ -46,13 +44,11 @@ export const parseData = (param: object) => {
 // localStorage sessionStorage
 export const localStore = {
   add: (param: object) => {
-    let options = Object.assign(
-      {
+    const options = {
         name: "key",
         value: "value",
-      },
-      param
-    );
+      ...param
+    };
     if (checkEmpty(options.value)) {
       if (typeof options.value == "object") {
         localStorage.setItem(options.name, JSON.stringify(options.value));
@@ -64,13 +60,11 @@ export const localStore = {
     }
   },
   read: (param: object) => {
-    let options = Object.assign(
-      {
+    const options = {
         name: "key",
         none: {},
-      },
-      param
-    );
+      ...param
+    };
     let resData = null;
     resData = localStorage.getItem(options.name);
     resData = parseData({ data: resData });
@@ -78,24 +72,20 @@ export const localStore = {
     return resData;
   },
   del: (param: object) => {
-    let options = Object.assign(
-      {
+    const options = {
         key: [],
-      },
-      param
-    );
+      ...param
+    };
     options.key.forEach((item) => {
       localStorage.removeItem(item);
     });
   },
   addCache: (param: object) => {
-    let options = Object.assign(
-      {
+    const options = {
         name: "key",
         value: "value",
-      },
-      param
-    );
+      ...param
+    };
     if (checkEmpty(options.value)) {
       if (typeof options.value == "object") {
         sessionStorage.setItem(options.name, JSON.stringify(options.value));
@@ -107,13 +97,11 @@ export const localStore = {
     }
   },
   readCache: (param: object) => {
-    let options = Object.assign(
-      {
+    const options = {
         name: "key",
         none: {},
-      },
-      param
-    );
+      ...param
+    };
     let resData = null;
     resData = sessionStorage.getItem(options.name);
     resData = parseData({ data: resData });
@@ -121,12 +109,10 @@ export const localStore = {
     return resData;
   },
   delCache: (param: object) => {
-    let options = Object.assign(
-      {
+    const options = {
         key: [],
-      },
-      param
-    );
+      ...param
+    };
     options.key.forEach((item) => {
       sessionStorage.removeItem(item);
     });
@@ -169,7 +155,7 @@ export const dataCenter = {
     return oldState.merge(modify);
   },
   save<T extends object>(oldState: T, modify: object, puppet = false) {
-    let newState = Object.assign({}, oldState, modify);
+    const newState = {...oldState, ...modify};
     if (puppet) {
       // true-如果更新后的state和旧state数据一样，则原样返回旧state，减少无必要的更新
       if (

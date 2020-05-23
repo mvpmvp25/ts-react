@@ -42,15 +42,15 @@ function cardSearch(props: PropsStruct) {
   const { expand } = state;
 
   const fieldShowCount = expand ? 6 : 3;
-  let searchFields = [];
+  const searchFields = [];
 
   const startTimeChange = (e: moment.Moment | null): void => {
-    //e: moment.Moment, dateStr: string
-    let timeState: TimeStateStruct = {
+    // e: moment.Moment, dateStr: string
+    const timeState: TimeStateStruct = {
       startTime: null,
       endTime: null,
     };
-    let fieldsInfo = form.getFieldsValue();
+    const fieldsInfo = form.getFieldsValue();
     if (checkEmpty(e)) {
       timeState.startTime = e;
       if (checkEmpty(fieldsInfo.endTime)) {
@@ -81,12 +81,12 @@ function cardSearch(props: PropsStruct) {
   };
 
   const endTimeChange = (e: moment.Moment | null): void => {
-    //e: moment.Moment, dateStr: string
-    let timeState: TimeStateStruct = {
+    // e: moment.Moment, dateStr: string
+    const timeState: TimeStateStruct = {
       startTime: null,
       endTime: null,
     };
-    let fieldsInfo = form.getFieldsValue();
+    const fieldsInfo = form.getFieldsValue();
     if (checkEmpty(e)) {
       timeState.endTime = e;
       if (checkEmpty(fieldsInfo.startTime)) {

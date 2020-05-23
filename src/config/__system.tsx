@@ -39,18 +39,18 @@ const routeFiles = require.context("routes", true, /\.tsx$/).keys();
 export const routeList = routeFiles.map((item) => {
   // ./xx/xxx.js
   let _path = item.replace(/\.tsx|\./g, "");
-  let isHomePath = _path == appConfig.indexPath;
-  let isExclude = appConfig.routeExclude.includes(_path);
-  let visitPath = isHomePath ? "/" : _path;
+  const isHomePath = _path == appConfig.indexPath;
+  const isExclude = appConfig.routeExclude.includes(_path);
+  const visitPath = isHomePath ? "/" : _path;
   _path = isExclude ? appConfig.indexPath : _path; // 访问忽略的路由显示首页
   // let _site = item.replace(/\.tsx|\.\//g, "");
-  let _component = Loadable({
+  const _component = Loadable({
     loader: () => import("../routes" + _path),
     loading: LoadingComponent,
     // delay: 200,
     timeout: appConfig.routeTimeout,
   });
-  let routeInfo = { path: visitPath, component: _component };
+  const routeInfo = { path: visitPath, component: _component };
   return routeInfo;
 });
 
@@ -63,7 +63,7 @@ export const getBreadcrumb = (key: string): MenuInfo[] => {
   interface Menulist {
     [index: string]: MenuInfo[];
   }
-  let allMenuInfo: Menulist = {};
+  const allMenuInfo: Menulist = {};
   // let allMenuInfo: object;
   appConfig.leftMenuList.forEach((item) => {
     item.menu.forEach((v) => {

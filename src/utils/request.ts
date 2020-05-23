@@ -31,8 +31,7 @@ interface LogCapture {
 export const clientLog = {
   projectInfo: { name: appConfig.name, version: appConfig.version },
   send(param: LogSend) {
-    let options = Object.assign(
-      {
+    const options = {
         requestName: "",
         requestApi: "",
         requestSource: location.href,
@@ -41,21 +40,20 @@ export const clientLog = {
         remarkMes: "",
         remarkCode: "",
         recorderName: "developer",
-      },
-      param
-    );
-    let _projectInfo = this.projectInfo;
-    let _requestInfo = {
+      ...param
+    };
+    const _projectInfo = this.projectInfo;
+    const _requestInfo = {
       name: options.requestName,
       api: options.requestApi,
       source: options.requestSource,
       param: options.requestParam,
     };
-    let _errorInfo = options.data;
-    let _remarkInfo = { mes: options.remarkMes, code: options.remarkCode };
-    let _timeInfo = { time: moment().format("YYYY/MM/DD HH:mm:ss") };
-    let _recorder = { name: options.recorderName };
-    let logData = {
+    const _errorInfo = options.data;
+    const _remarkInfo = { mes: options.remarkMes, code: options.remarkCode };
+    const _timeInfo = { time: moment().format("YYYY/MM/DD HH:mm:ss") };
+    const _recorder = { name: options.recorderName };
+    const logData = {
       _projectInfo,
       _requestInfo,
       _errorInfo,
@@ -79,13 +77,11 @@ export const clientLog = {
     );
   },
   capture(param: LogCapture) {
-    let options = Object.assign(
-      {
+    const options = {
         code: "",
         msg: "",
-      },
-      param
-    );
+      ...param
+    };
     const { code, msg } = options;
     const logData = { ...this.projectInfo, code, msg };
     if (process.env.SERVER_TYPE != "prod") {
@@ -123,11 +119,10 @@ interface ReqOptionStruct {
 }
 
 export const request = (param: ReqSet, options: ReqOptionStruct) => {
-  let reqTime = new Date().getTime();
+  const reqTime = new Date().getTime();
   let resTime = 0;
   let isModalView = false;
-  let reqOption = Object.assign(
-    {
+  const reqOption = {
       url: "",
       type: options.method,
       data: {},
@@ -145,9 +140,8 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
       unAuth: () => {}, // 未登錄callback
       headers: {},
       sendLog: false,
-    },
-    param
-  );
+    ...param
+  };
 
   if (checkEmpty(reqOption.url)) {
     // 优先使用param传入的url
@@ -164,7 +158,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
     }
   }
 
-  //reqOption.data.timeStamp = moment().format("YYYYMMDDHHmmss");
+  // reqOption.data.timeStamp = moment().format("YYYYMMDDHHmmss");
 
   if (reqOption.type == "get" || reqOption.type == "GET") {
     // 需补充isUpload为true时不能使用get方式
@@ -189,8 +183,8 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
     Authorization?: string;
   }
 
-  let requestConfig = {
-    //credentials: 'include',
+  const requestConfig = {
+    // credentials: 'include',
     method: reqOption.type,
     headers: {},
     // mode: "cors",
@@ -227,7 +221,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
     if (reqOption.warn && !isModalView) {
       modalView.confirm({
         iconType: "bookFail",
-        content: codeText["A002"],
+        content: codeText.A002,
         okText: "登錄",
         btnType: "hideCancel",
         onOk: () => {
@@ -243,7 +237,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
   if (reqOption.type == "post" || reqOption.type == "POST") {
     let bodyData: object | string | null = null;
     if (reqOption.isUpload) {
-      let formData = new FormData();
+      const formData = new FormData();
       interface FormDataStruct {
         [index: string]: string | Blob;
       }
@@ -283,7 +277,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
           requestName: "webApi",
           requestParam: reqOption,
           data: logData,
-          remarkMes: { reqConfig: requestConfig, processTime: processTime },
+          remarkMes: { reqConfig: requestConfig, processTime },
         });
       }
     }
@@ -342,7 +336,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
         // 请求超時
         reqOption.error && reqOption.error(data);
         if (reqOption.toast) {
-          report.info(codeText["A001"]);
+          report.info(codeText.A001);
         }
         reqDone(false, { reqStatus: "timeout" }, "-");
       } else if (data.fact == "error") {
@@ -365,7 +359,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
       } else {
         // 请求正常
         resTime = new Date().getTime();
-        let processTime = (resTime - reqTime) / 1000;
+        const processTime = (resTime - reqTime) / 1000;
         if (data.code == 200008) {
           // token无效 但是這種情況後端返回http code不是200
           localStore.clearLogin();
@@ -387,7 +381,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
               // ie處理方法 提示用户是要保存文件还是直接打开文件
               window.navigator.msSaveOrOpenBlob(fileBlob, fileName);
             } else {
-              let elink = document.createElement("a");
+              const elink = document.createElement("a");
               elink.download = fileName;
               elink.style.display = "none";
               elink.href = URL.createObjectURL(fileBlob);
@@ -399,7 +393,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
           } else {
             reqOption.fail && reqOption.fail(data);
             if (reqOption.toast) {
-              report.info(data.msg || codeText["A003"]);
+              report.info(data.msg || codeText.A003);
             }
             reqDone(true, data, processTime);
           }
@@ -409,7 +403,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
     })
     .catch((err) => {
       // bbtLog.info(err, "-------- request catch");
-      let errData = { fact: "failed", err: err };
+      const errData = { fact: "failed", err };
       if (reqOption.toast) {
         report.info(options.name + " errorCatch: failed");
       }
