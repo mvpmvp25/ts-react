@@ -36,7 +36,7 @@ function LoadingComponent(props: PropsInfo) {
 
 // 路由生成
 const routeFiles = require.context("routes", true, /\.tsx$/).keys();
-export const routeList = routeFiles.map((item) => {
+export const routeList = routeFiles.map(item => {
   // ./xx/xxx.js
   let _path = item.replace(/\.tsx|\./g, "");
   const isHomePath = _path === appConfig.indexPath;
@@ -48,7 +48,7 @@ export const routeList = routeFiles.map((item) => {
     loader: () => import("../routes" + _path),
     loading: LoadingComponent,
     // delay: 200,
-    timeout: appConfig.routeTimeout,
+    timeout: appConfig.routeTimeout
   });
   const routeInfo = { path: visitPath, component: _component };
   return routeInfo;
@@ -65,15 +65,15 @@ export const getBreadcrumb = (key: string): MenuInfo[] => {
   }
   const allMenuInfo: Menulist = {};
   // let allMenuInfo: object;
-  appConfig.leftMenuList.forEach((item) => {
-    item.menu.forEach((v) => {
+  appConfig.leftMenuList.forEach(item => {
+    item.menu.forEach(v => {
       allMenuInfo[`/${item.navKey}/${v.key}`] = [
         {
-          navText: item.navName,
+          navText: item.navName
         },
         {
-          navText: v.name,
-        },
+          navText: v.name
+        }
       ];
     });
   });
@@ -87,14 +87,10 @@ export const getBreadcrumb = (key: string): MenuInfo[] => {
 export const themeChange = (type: string) => {
   switch (type) {
     case "dark":
-      document
-        .getElementsByTagName("body")[0]
-        .style.setProperty("--main-color", "#f00");
+      document.getElementsByTagName("body")[0].style.setProperty("--main-color", "#f00");
       break;
     default:
-      document
-        .getElementsByTagName("body")[0]
-        .style.setProperty("--main-color", "#3318cf");
+      document.getElementsByTagName("body")[0].style.setProperty("--main-color", "#3318cf");
   }
 };
 
@@ -114,7 +110,7 @@ export const pageView = {
   goBack() {
     appHistory.goBack();
     // this.rollTop();
-  },
+  }
   // barOpen(info) {
   //   if (info.type === 0) { // 外鏈
   //     window.open(info.url);

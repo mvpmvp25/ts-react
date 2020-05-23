@@ -37,7 +37,7 @@ function cardSearch(props: PropsStruct) {
   //   }
   // ];
   const [state, setState] = useState({
-    expand: false,
+    expand: false
   });
   const { expand } = state;
 
@@ -48,16 +48,13 @@ function cardSearch(props: PropsStruct) {
     // e: moment.Moment, dateStr: string
     const timeState: TimeStateStruct = {
       startTime: null,
-      endTime: null,
+      endTime: null
     };
     const fieldsInfo = form.getFieldsValue();
     if (checkEmpty(e)) {
       timeState.startTime = e;
       if (checkEmpty(fieldsInfo.endTime)) {
-        const diffDay = moment(fieldsInfo.endTime).diff(
-          e as moment.Moment,
-          "days"
-        );
+        const diffDay = moment(fieldsInfo.endTime).diff(e as moment.Moment, "days");
         if (diffDay < 0) {
           timeState.endTime = null;
         } else {
@@ -71,12 +68,12 @@ function cardSearch(props: PropsStruct) {
     form.setFields([
       {
         name: ["startTime"],
-        value: timeState.startTime,
+        value: timeState.startTime
       },
       {
         name: ["endTime"],
-        value: timeState.endTime,
-      },
+        value: timeState.endTime
+      }
     ]);
   };
 
@@ -84,16 +81,13 @@ function cardSearch(props: PropsStruct) {
     // e: moment.Moment, dateStr: string
     const timeState: TimeStateStruct = {
       startTime: null,
-      endTime: null,
+      endTime: null
     };
     const fieldsInfo = form.getFieldsValue();
     if (checkEmpty(e)) {
       timeState.endTime = e;
       if (checkEmpty(fieldsInfo.startTime)) {
-        const diffDay = (e as moment.Moment).diff(
-          moment(fieldsInfo.startTime),
-          "days"
-        );
+        const diffDay = (e as moment.Moment).diff(moment(fieldsInfo.startTime), "days");
         if (diffDay < 0) {
           timeState.startTime = null;
         } else {
@@ -107,12 +101,12 @@ function cardSearch(props: PropsStruct) {
     form.setFields([
       {
         name: ["startTime"],
-        value: timeState.startTime,
+        value: timeState.startTime
       },
       {
         name: ["endTime"],
-        value: timeState.endTime,
-      },
+        value: timeState.endTime
+      }
     ]);
   };
 
@@ -123,8 +117,8 @@ function cardSearch(props: PropsStruct) {
       rules={[
         {
           required: true,
-          message: "不能为空",
-        },
+          message: "不能为空"
+        }
       ]}
       label="订单号"
     >
@@ -139,8 +133,8 @@ function cardSearch(props: PropsStruct) {
       rules={[
         {
           required: true,
-          message: "不能为空",
-        },
+          message: "不能为空"
+        }
       ]}
       label="开始时间"
     >
@@ -163,8 +157,8 @@ function cardSearch(props: PropsStruct) {
       rules={[
         {
           required: true,
-          message: "不能为空",
-        },
+          message: "不能为空"
+        }
       ]}
       label="结束时间"
     >
@@ -187,8 +181,8 @@ function cardSearch(props: PropsStruct) {
       rules={[
         {
           required: true,
-          message: "不能为空",
-        },
+          message: "不能为空"
+        }
       ]}
       label="用户编号"
     >
@@ -257,7 +251,7 @@ function cardSearch(props: PropsStruct) {
 }
 
 cardSearch.propTypes = {
-  sendData: PropTypes.func.isRequired,
+  sendData: PropTypes.func.isRequired
 };
 
 export default cardSearch; // name为表单域内字段 id 的前缀

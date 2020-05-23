@@ -10,7 +10,7 @@ interface PropsStruct extends propsBaseStruct {
 
 function CardList(props: PropsStruct) {
   const {
-    static: { list },
+    static: { list }
     // publics: { page },
     // privates: { taskList }
   } = props;
@@ -25,11 +25,11 @@ function CardList(props: PropsStruct) {
       dataIndex: "name",
       render(text: string) {
         return <a>{text}</a>;
-      },
+      }
     },
     {
       title: "订单号",
-      dataIndex: "orderId",
+      dataIndex: "orderId"
     },
     {
       title: "操作",
@@ -42,25 +42,21 @@ function CardList(props: PropsStruct) {
             <a>Delete</a>
           </span>
         );
-      },
-    },
+      }
+    }
   ];
 
   return (
     <div>
-      <Table
-        columns={columns}
-        dataSource={list}
-        rowKey={(record) => record.orderId}
-      />
+      <Table columns={columns} dataSource={list} rowKey={record => record.orderId} />
     </div>
   );
 }
 
 CardList.propTypes = {
   static: PropTypes.exact({
-    list: PropTypes.array,
-  }),
+    list: PropTypes.array
+  })
   // publics: PropTypes.object, // array bool func number object string
   // privates: PropTypes.object.isRequired
 };

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 // import '../../style/welcome.scss';
 
 function OrderList() {
-  const [buttonText, setButtonText] = useState('1111111');
+  const [buttonText, setButtonText] = useState("1111111");
 
   function handleClick() {
-    return setButtonText('Thanks, been clicked!');
+    return setButtonText("Thanks, been clicked!");
   }
 
   return (

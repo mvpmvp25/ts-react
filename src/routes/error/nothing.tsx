@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 // import '../../style/welcome.scss';
 
 function Nothing() {
-  const [buttonText, setButtonText] = useState('0000');
+  const [buttonText, setButtonText] = useState("0000");
 
   function handleClick() {
-    return setButtonText('Thanks, been clicked!');
+    return setButtonText("Thanks, been clicked!");
   }
 
   return (

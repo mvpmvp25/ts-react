@@ -29,7 +29,7 @@ export const checkEmpty = (data: any) => {
 // json格式轉換
 export const parseData = (param: object) => {
   const options = {
-      data: "",
+    data: "",
     ...param
   };
   let resData = "";
@@ -45,8 +45,8 @@ export const parseData = (param: object) => {
 export const localStore = {
   add: (param: object) => {
     const options = {
-        name: "key",
-        value: "value",
+      name: "key",
+      value: "value",
       ...param
     };
     if (checkEmpty(options.value)) {
@@ -61,8 +61,8 @@ export const localStore = {
   },
   read: (param: object) => {
     const options = {
-        name: "key",
-        none: {},
+      name: "key",
+      none: {},
       ...param
     };
     let resData = null;
@@ -73,17 +73,17 @@ export const localStore = {
   },
   del: (param: object) => {
     const options = {
-        key: [],
+      key: [],
       ...param
     };
-    options.key.forEach((item) => {
+    options.key.forEach(item => {
       localStorage.removeItem(item);
     });
   },
   addCache: (param: object) => {
     const options = {
-        name: "key",
-        value: "value",
+      name: "key",
+      value: "value",
       ...param
     };
     if (checkEmpty(options.value)) {
@@ -98,8 +98,8 @@ export const localStore = {
   },
   readCache: (param: object) => {
     const options = {
-        name: "key",
-        none: {},
+      name: "key",
+      none: {},
       ...param
     };
     let resData = null;
@@ -110,10 +110,10 @@ export const localStore = {
   },
   delCache: (param: object) => {
     const options = {
-        key: [],
+      key: [],
       ...param
     };
-    options.key.forEach((item) => {
+    options.key.forEach(item => {
       sessionStorage.removeItem(item);
     });
   },
@@ -123,7 +123,7 @@ export const localStore = {
   clearLogin() {
     this.del({ key: ["tokenInfo"] });
     this.clearUser();
-  },
+  }
 };
 
 // type ImmutableDataStruct = Immutable.Map<string | number, object | any[]>;
@@ -155,12 +155,10 @@ export const dataCenter = {
     return oldState.merge(modify);
   },
   save<T extends object>(oldState: T, modify: object, puppet = false) {
-    const newState = {...oldState, ...modify};
+    const newState = { ...oldState, ...modify };
     if (puppet) {
       // true-如果更新后的state和旧state数据一样，则原样返回旧state，减少无必要的更新
-      if (
-        Immutable.is(Immutable.fromJS(oldState), Immutable.fromJS(newState))
-      ) {
+      if (Immutable.is(Immutable.fromJS(oldState), Immutable.fromJS(newState))) {
         return oldState;
       } else {
         return newState;
@@ -168,5 +166,5 @@ export const dataCenter = {
     } else {
       return newState;
     }
-  },
+  }
 };

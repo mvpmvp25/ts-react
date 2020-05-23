@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./router";
 // import { appStart } from 'config/init';
-import './main.scss';
+import "./main.scss";
 
 // appStart.init();
 ReactDOM.render(<App />, document.getElementById("root"));

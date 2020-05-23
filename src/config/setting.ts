@@ -12,31 +12,30 @@ export default {
       navKey: "general",
       navName: "textxxx",
       icon: "notification",
-      menu: [{ key: "welcome", name: "text111" }],
+      menu: [{ key: "welcome", name: "text111" }]
     },
     {
       navKey: "user",
       navName: "textyyy",
       icon: "notification",
-      menu: [{ key: "list", name: "text222" }],
-    },
+      menu: [{ key: "list", name: "text222" }]
+    }
   ],
   zone: {
     local: {
-      serverUrl:
-        "https://www.fastmock.site/mock/560cc860d5341f83ccec8daabb60cfcc/frontend/",
+      serverUrl: "https://www.fastmock.site/mock/560cc860d5341f83ccec8daabb60cfcc/frontend/"
     },
     dev: {
-      serverUrl: "",
+      serverUrl: ""
     },
     stg: {
-      serverUrl: "",
+      serverUrl: ""
     },
     uat: {
-      serverUrl: "",
+      serverUrl: ""
     },
     prod: {
-      serverUrl: "",
-    },
-  },
+      serverUrl: ""
+    }
+  }
 };

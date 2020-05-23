@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 // import PropTypes from 'prop-types';
-import { Modal, Button } from 'antd';
+import { Modal, Button } from "antd";
 
 class CardInfo extends React.Component {
   state = { visible: false };

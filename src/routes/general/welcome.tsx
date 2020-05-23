@@ -21,7 +21,7 @@ const initState: StateStruct = {
   page: 3,
   age: 31,
   taskList: ["aa", "bb"],
-  list: [],
+  list: []
 };
 
 function Welcome() {
@@ -36,8 +36,8 @@ function Welcome() {
       taskList: ["ss", "zz"],
       list: [
         { orderId: 2333, name: "SDFS" },
-        { orderId: 6523, name: "HYEE" },
-      ],
+        { orderId: 6523, name: "HYEE" }
+      ]
     });
   };
 
@@ -55,17 +55,13 @@ function Welcome() {
       data: { page, ...searchData },
       success: (res: ResStruct) => {
         setState(dataCenter.save(state, { list: res.data.list }));
-      },
+      }
     });
   }, [searchData]);
 
   return (
     <div className={`main-box ${welcomeStyle.pageBox}`}>
-      <CardSearch
-        publics={{ page, list }}
-        privates={{ taskList }}
-        sendData={getSearchData}
-      />
+      <CardSearch publics={{ page, list }} privates={{ taskList }} sendData={getSearchData} />
       <CardList static={{ list }} publics={{ page }} privates={{ taskList }} />
       <CardInfo />
       <img src={require("assets/img/tab-my-pre.svg")} />

@@ -5,7 +5,10 @@
   "main": "./src/index.ts",
   "scripts": {
     "start": "cross-env SERVER_TYPE=local webpack-dev-server --open",
-    "lint": "tslint -c ./tslint.json -p ./tsconfig.json --fix",
+    "review": "tslint -c ./tslint.json -p ./tsconfig.json",
+    "lookover": "prettier --check ./src/**/*.{ts,tsx,scss,html,json}",
+    "lint": "npm run review && npm run lookover",
+    "format": "prettier --write ./src/**/*.{ts,tsx,scss,html,json}",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,6 +18,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "bugs": {
     "url": "https://github.com/mvpmvp25/ts-react/issues"
   },
