@@ -315,7 +315,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
           return res;
         }
       }),
-    new Promise(resolve => {
+    new Promise((resolve: (value: object) => void) => {
       // resolve, reject
       setTimeout(() => resolve({ fact: "timeout" }), reqOption.timeout);
     }).then(res => {

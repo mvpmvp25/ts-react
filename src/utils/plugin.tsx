@@ -46,7 +46,7 @@ export const loading = new LoadPop();
 
 class LoginView {
   private loginPopupEle: HTMLElement | null;
-  private ssoTask: number | null;
+  private ssoTask: number | undefined;
   private loginMaskEle: HTMLElement | null;
   private loginContentEle: HTMLElement | null;
   private loginCloseEle: HTMLElement | null;
@@ -56,7 +56,7 @@ class LoginView {
     //     isAuto: false
     // }, param);
     this.loginPopupEle = null;
-    this.ssoTask = null;
+    this.ssoTask = undefined;
     this.loginMaskEle = null;
     this.loginContentEle = null;
     this.loginCloseEle = null;

@@ -15,7 +15,7 @@ module.exports = {
     path: path.resolve(__dirname, "./dist"),
     filename: "js/[name]-[hash:8].bundle.js",
     chunkFilename: "js/[name]-[hash:8].bundle.js",
-    publicPath: "/",
+    publicPath: "/"
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
@@ -26,8 +26,8 @@ module.exports = {
       style: path.resolve(__dirname, "./src/style"),
       utils: path.resolve(__dirname, "./src/utils"),
       config: path.resolve(__dirname, "./src/config"),
-      routes: path.resolve(__dirname, "./src/routes"),
-    },
+      routes: path.resolve(__dirname, "./src/routes")
+    }
   },
   devtool: isLocal ? "source-map" : false,
   devServer: {
@@ -38,7 +38,7 @@ module.exports = {
     contentBase: path.join(__dirname, "./dist"),
     // hot: true,
     host: "localhost",
-    port: 8071,
+    port: 8071
     // proxy: {
     //   "/api": {
     //     changeOrigin: true,
@@ -66,67 +66,67 @@ module.exports = {
               tsImportPluginFactory({
                 libraryDirectory: "es",
                 libraryName: "antd",
-                style: "css",
-              }),
-            ],
-          }),
+                style: "css"
+              })
+            ]
+          })
           // compilerOptions: {
           //   module: "es2015",
           // },
         },
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.(sa|sc|c)ss$/,
         include: [
           path.resolve(__dirname, "src/components"),
           path.resolve(__dirname, "src/routes"),
-          path.resolve(__dirname, "src/style"),
+          path.resolve(__dirname, "src/style")
         ],
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: isLocal,
+              hmr: isLocal
               // reloadAll: true,
               // publicPath: '../'
-            },
+            }
           },
           {
             loader: "css-loader",
             options: {
               modules: {
-                localIdentName: "[name]__[local]--[hash:base64:5]",
-              },
-            },
+                localIdentName: "[name]__[local]--[hash:base64:5]"
+              }
+            }
           },
           "postcss-loader",
-          "sass-loader",
-        ],
+          "sass-loader"
+        ]
       },
       {
         // antd样式、style/main.scss不需要css module 所以另行处理
         test: /\.(sa|sc|c)ss$/,
         include: [
           path.resolve(__dirname, "node_modules"),
-          path.resolve(__dirname, "src/main.scss"),
+          path.resolve(__dirname, "src/main.scss")
         ],
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: isLocal,
-            },
+              hmr: isLocal
+            }
           },
           {
             loader: "css-loader",
             options: {
-              importLoaders: 1,
-            },
+              importLoaders: 1
+            }
           },
           "postcss-loader",
-          "sass-loader",
-        ],
+          "sass-loader"
+        ]
       },
       {
         test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
@@ -136,32 +136,32 @@ module.exports = {
             options: {
               esModule: false,
               limit: 5000,
-              name: "resource/[name].[hash:8].[ext]",
+              name: "resource/[name].[hash:8].[ext]"
               //outputPath: './'
-            },
-          },
-        ],
-      },
-    ],
+            }
+          }
+        ]
+      }
+    ]
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       title: "ts-react",
-      favicon: "favicon.ico",
+      favicon: "favicon.ico"
     }),
     // new webpack.HotModuleReplacementPlugin(),
     new webpack.EnvironmentPlugin(["SERVER_TYPE"]),
     new MiniCssExtractPlugin({
       // 【bug】無法生成chunk css https://github.com/webpack-contrib/mini-css-extract-plugin/issues/147
       filename: isLocal ? "css/[name].css" : "css/[name]-[contenthash:8].css",
-      chunkFilename: isLocal ? "css/[id].css" : "css/[id]-[contenthash:8].css",
+      chunkFilename: isLocal ? "css/[id].css" : "css/[id]-[contenthash:8].css"
     }),
-    new ForkTsCheckerWebpackPlugin(), // 插件在编译之间重用抽象语法树，并与TSLint共享这些树
+    new ForkTsCheckerWebpackPlugin({ async: false }) // 插件在编译之间重用抽象语法树，并与TSLint共享这些树
     // new webpack.WatchIgnorePlugin([
     //   /\.js$/,
     //   /\.d\.ts$/
     // ])
-  ],
+  ]
 };

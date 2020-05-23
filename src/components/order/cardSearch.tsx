@@ -44,7 +44,7 @@ function cardSearch(props: PropsStruct) {
   const fieldShowCount = expand ? 6 : 3;
   const searchFields = [];
 
-  const startTimeChange = (e: moment.Moment | null): void => {
+  const startTimeChange = (e: moment.Moment | null, dateStr: string): void => {
     // e: moment.Moment, dateStr: string
     const timeState: TimeStateStruct = {
       startTime: null,
@@ -77,7 +77,7 @@ function cardSearch(props: PropsStruct) {
     ]);
   };
 
-  const endTimeChange = (e: moment.Moment | null): void => {
+  const endTimeChange = (e: moment.Moment | null, dateStr: string): void => {
     // e: moment.Moment, dateStr: string
     const timeState: TimeStateStruct = {
       startTime: null,
