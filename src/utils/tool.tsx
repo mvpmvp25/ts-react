@@ -1,7 +1,7 @@
-import Immutable from 'immutable';
+import Immutable from "immutable";
 
 // 判断值是否为空 有值返回ture，否则返回false
-export const checkEmpty = data => {
+export const checkEmpty = (data: any) => {
   if (data instanceof Array) {
     if (data.length == 0) {
       return false;
@@ -9,16 +9,16 @@ export const checkEmpty = data => {
       return true;
     }
   } else if (data instanceof Object) {
-    if (JSON.stringify(data) == '{}') {
+    if (JSON.stringify(data) == "{}") {
       return false;
     } else {
       return true;
     }
   } else {
-    if (data != '' && data != null && data != undefined) {
+    if (data != "" && data != null && data != undefined) {
       // NaN返回true
       return true;
-    } else if (data == 0 && typeof data == 'number') {
+    } else if (data == 0 && typeof data == "number") {
       return true;
     } else {
       return false;
@@ -27,14 +27,14 @@ export const checkEmpty = data => {
 };
 
 // json格式轉換
-export const parseData = param => {
+export const parseData = (param: object) => {
   let options = Object.assign(
     {
-      data: ''
+      data: "",
     },
     param
   );
-  let resData = '';
+  let resData = "";
   try {
     resData = JSON.parse(options.data);
   } catch (e) {
@@ -45,29 +45,29 @@ export const parseData = param => {
 
 // localStorage sessionStorage
 export const localStore = {
-  add: param => {
+  add: (param: object) => {
     let options = Object.assign(
       {
-        name: 'key',
-        value: 'value'
+        name: "key",
+        value: "value",
       },
       param
     );
     if (checkEmpty(options.value)) {
-      if (typeof options.value == 'object') {
+      if (typeof options.value == "object") {
         localStorage.setItem(options.name, JSON.stringify(options.value));
       } else {
         localStorage.setItem(options.name, options.value);
       }
     } else {
-      localStorage.setItem(options.name, '{}');
+      localStorage.setItem(options.name, "{}");
     }
   },
-  read: param => {
+  read: (param: object) => {
     let options = Object.assign(
       {
-        name: 'key',
-        none: {}
+        name: "key",
+        none: {},
       },
       param
     );
@@ -77,40 +77,40 @@ export const localStore = {
     resData = checkEmpty(resData) ? resData : options.none;
     return resData;
   },
-  del: param => {
+  del: (param: object) => {
     let options = Object.assign(
       {
-        key: []
+        key: [],
       },
       param
     );
-    options.key.forEach(item => {
+    options.key.forEach((item) => {
       localStorage.removeItem(item);
     });
   },
-  addCache: param => {
+  addCache: (param: object) => {
     let options = Object.assign(
       {
-        name: 'key',
-        value: 'value'
+        name: "key",
+        value: "value",
       },
       param
     );
     if (checkEmpty(options.value)) {
-      if (typeof options.value == 'object') {
+      if (typeof options.value == "object") {
         sessionStorage.setItem(options.name, JSON.stringify(options.value));
       } else {
         sessionStorage.setItem(options.name, options.value);
       }
     } else {
-      sessionStorage.setItem(options.name, '{}');
+      sessionStorage.setItem(options.name, "{}");
     }
   },
-  readCache: param => {
+  readCache: (param: object) => {
     let options = Object.assign(
       {
-        name: 'key',
-        none: {}
+        name: "key",
+        none: {},
       },
       param
     );
@@ -120,42 +120,61 @@ export const localStore = {
     resData = checkEmpty(resData) ? resData : options.none;
     return resData;
   },
-  delCache: param => {
+  delCache: (param: object) => {
     let options = Object.assign(
       {
-        key: []
+        key: [],
       },
       param
     );
-    options.key.forEach(item => {
+    options.key.forEach((item) => {
       sessionStorage.removeItem(item);
     });
   },
   clearUser() {
-    this.delCache({ key: ['memberInfo', 'airInfo'] });
+    this.delCache({ key: ["memberInfo", "airInfo"] });
   },
   clearLogin() {
-    this.del({ key: ['tokenInfo'] });
+    this.del({ key: ["tokenInfo"] });
     this.clearUser();
-  }
+  },
+};
+
+// type ImmutableDataStruct = Immutable.Map<string | number, object | any[]>;
+// export type InfoStruct = { [key: string]: any }; //{ [key: string]: unknown; } Immutable.Map<string, V>
+// export type ArrStruct = any[];
+// export type MapStruct = Immutable.Map<string, any>;
+// export type ListStruct = Immutable.List<any>;
+// export type ImmutableStruct = MapStruct | ListStruct;
+
+export type RecordStruct<T> = Immutable.Record<T>;
+// 所有业务组件公共的props结构
+export type propsBaseStruct = {
+  static?: object;
+  publics?: object;
+  privates?: object;
 };
 
 // Data Center
 export const dataCenter = {
-  fromJS(state) {
-    return Immutable.fromJS(state);
+  create<T extends object>(state: T) {
+    const stateRecord = Immutable.Record(state);
+    return new stateRecord();
+    // return Immutable.Map(state);
   },
-  toJS(state) {
-    return state.toJS();
-  },
-  merge(oldState, modify) {
+  // toJS<T>(state: Immutable.Map<T>): T {
+  //   return state.toJS();
+  // },
+  merge<T>(oldState: RecordStruct<T> & T, modify: Partial<T>) {
     return oldState.merge(modify);
   },
-  save(oldState, modify, puppet = false) {
+  save<T extends object>(oldState: T, modify: object, puppet = false) {
     let newState = Object.assign({}, oldState, modify);
     if (puppet) {
-      // true-如果新state和旧state数据一样，则原样返回旧state，减少无必要的更新
-      if (Immutable.is(Immutable.fromJS(oldState), Immutable.fromJS(newState))) {
+      // true-如果更新后的state和旧state数据一样，则原样返回旧state，减少无必要的更新
+      if (
+        Immutable.is(Immutable.fromJS(oldState), Immutable.fromJS(newState))
+      ) {
         return oldState;
       } else {
         return newState;
@@ -163,5 +182,5 @@ export const dataCenter = {
     } else {
       return newState;
     }
-  }
+  },
 };

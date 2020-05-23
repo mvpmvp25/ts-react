@@ -1,6 +1,11 @@
-import { checkEmpty, localStore } from './tool';
+import { checkEmpty, localStore } from "./tool";
 
-export const checkLogin = param => {
+interface CheckLoginStruct {
+  inLine?: (tokenInfo: object) => void;
+  offLine?: (tokenInfo: object) => void;
+}
+
+export const checkLogin = (param: CheckLoginStruct) => {
   let options = Object.assign(
     {
       inLine: () => {},
@@ -8,7 +13,7 @@ export const checkLogin = param => {
     },
     param
   );
-  let tokenInfo = localStore.read({ name: 'tokenInfo', none: {} });
+  let tokenInfo = localStore.read({ name: "tokenInfo", none: {} });
   let resData = { tokenInfo, hasToken: false };
   if (checkEmpty(tokenInfo)) {
     resData.hasToken = true;

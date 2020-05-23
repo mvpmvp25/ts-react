@@ -1,9 +1,21 @@
-import React from 'react';
-import { Modal, Button } from 'antd';
+import React from "react";
+import { Modal, Button } from "antd";
 // import '../../style/welcome.scss';
 
-class UserList extends React.Component {
-  constructor(props) {
+interface PropsStruct {
+  history: object;
+  location: object;
+  match: object;
+  staticContext: undefined;
+}
+
+class UserList extends React.Component<
+  {},
+  {
+    visible: boolean;
+  }
+> {
+  constructor(props: PropsStruct) {
     super(props);
     this.state = { visible: false };
     this.handleOk = this.handleOk.bind(this);

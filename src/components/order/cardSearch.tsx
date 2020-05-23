@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import { Form, Row, Col, Input, Button, DatePicker } from 'antd';
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
-import { checkEmpty, dataCenter } from 'utils/tool';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
+import { Form, Row, Col, Input, Button, DatePicker } from "antd";
+import { UpOutlined, DownOutlined } from "@ant-design/icons";
+import { checkEmpty, propsBaseStruct, dataCenter } from "utils/tool";
 
-const dateFormat = 'YYYY-MM-DD';
+const dateFormat = "YYYY-MM-DD";
 
-function cardSearch(props) {
+interface PropsStruct extends propsBaseStruct {
+  sendData: (values: object) => void;
+}
+
+interface TimeStateStruct {
+  startTime: object | null;
+  endTime: object | null;
+}
+
+function cardSearch(props: PropsStruct) {
   const [form] = Form.useForm();
   // const fields = [
   //   {
@@ -28,20 +37,27 @@ function cardSearch(props) {
   //   }
   // ];
   const [state, setState] = useState({
-    expand: false
+    expand: false,
   });
   const { expand } = state;
 
   const fieldShowCount = expand ? 6 : 3;
   let searchFields = [];
 
-  const startTimeChange = e => {
-    let timeState = {};
+  const startTimeChange = (e: moment.Moment | null): void => {
+    //e: moment.Moment, dateStr: string
+    let timeState: TimeStateStruct = {
+      startTime: null,
+      endTime: null,
+    };
     let fieldsInfo = form.getFieldsValue();
     if (checkEmpty(e)) {
       timeState.startTime = e;
       if (checkEmpty(fieldsInfo.endTime)) {
-        const diffDay = moment(fieldsInfo.endTime).diff(e, 'days');
+        const diffDay = moment(fieldsInfo.endTime).diff(
+          e as moment.Moment,
+          "days"
+        );
         if (diffDay < 0) {
           timeState.endTime = null;
         } else {
@@ -54,23 +70,30 @@ function cardSearch(props) {
     }
     form.setFields([
       {
-        name: ['startTime'],
-        value: timeState.startTime
+        name: ["startTime"],
+        value: timeState.startTime,
       },
       {
-        name: ['endTime'],
-        value: timeState.endTime
-      }
+        name: ["endTime"],
+        value: timeState.endTime,
+      },
     ]);
   };
 
-  const endTimeChange = e => {
-    let timeState = {};
+  const endTimeChange = (e: moment.Moment | null): void => {
+    //e: moment.Moment, dateStr: string
+    let timeState: TimeStateStruct = {
+      startTime: null,
+      endTime: null,
+    };
     let fieldsInfo = form.getFieldsValue();
     if (checkEmpty(e)) {
       timeState.endTime = e;
       if (checkEmpty(fieldsInfo.startTime)) {
-        const diffDay = e.diff(moment(fieldsInfo.startTime), 'days');
+        const diffDay = (e as moment.Moment).diff(
+          moment(fieldsInfo.startTime),
+          "days"
+        );
         if (diffDay < 0) {
           timeState.startTime = null;
         } else {
@@ -83,13 +106,13 @@ function cardSearch(props) {
     }
     form.setFields([
       {
-        name: ['startTime'],
-        value: timeState.startTime
+        name: ["startTime"],
+        value: timeState.startTime,
       },
       {
-        name: ['endTime'],
-        value: timeState.endTime
-      }
+        name: ["endTime"],
+        value: timeState.endTime,
+      },
     ]);
   };
 
@@ -100,8 +123,8 @@ function cardSearch(props) {
       rules={[
         {
           required: true,
-          message: '不能为空'
-        }
+          message: "不能为空",
+        },
       ]}
       label="订单号"
     >
@@ -116,8 +139,8 @@ function cardSearch(props) {
       rules={[
         {
           required: true,
-          message: '不能为空'
-        }
+          message: "不能为空",
+        },
       ]}
       label="开始时间"
     >
@@ -140,8 +163,8 @@ function cardSearch(props) {
       rules={[
         {
           required: true,
-          message: '不能为空'
-        }
+          message: "不能为空",
+        },
       ]}
       label="结束时间"
     >
@@ -164,8 +187,8 @@ function cardSearch(props) {
       rules={[
         {
           required: true,
-          message: '不能为空'
-        }
+          message: "不能为空",
+        },
       ]}
       label="用户编号"
     >
@@ -173,11 +196,11 @@ function cardSearch(props) {
     </Form.Item>
   );
 
-  const handleSearch = values => {
+  const handleSearch = (values: object) => {
     props.sendData(values);
   };
 
-  const handleFailed = err => {
+  const handleFailed = (err: object) => {
     console.info(err);
   };
 
@@ -209,7 +232,7 @@ function cardSearch(props) {
             <Col
               span={8}
               key={index}
-              style={{ display: index < fieldShowCount ? 'block' : 'none' }}
+              style={{ display: index < fieldShowCount ? "block" : "none" }}
             >
               {item}
             </Col>
@@ -217,7 +240,7 @@ function cardSearch(props) {
         })}
       </Row>
       <Row>
-        <Col span={24} style={{ textAlign: 'right' }}>
+        <Col span={24} style={{ textAlign: "right" }}>
           <Button type="primary" htmlType="submit">
             Search
           </Button>
@@ -234,7 +257,7 @@ function cardSearch(props) {
 }
 
 cardSearch.propTypes = {
-  sendData: PropTypes.func.isRequired
+  sendData: PropTypes.func.isRequired,
 };
 
 export default cardSearch; // name为表单域内字段 id 的前缀

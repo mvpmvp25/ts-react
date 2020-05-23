@@ -1,28 +1,46 @@
-import fetch from 'isomorphic-fetch';
-import moment from 'moment';
-import * as Sentry from '@sentry/browser';
-import { Api } from 'config/api';
-import appConfig from 'config/setting';
-import { checkLogin } from './auth';
-import { localStore, checkEmpty } from './tool';
-import { loading, modalView, report } from './plugin';
-import { codeText } from 'config/codeText';
+import fetch from "isomorphic-fetch";
+import moment from "moment";
+import * as Sentry from "@sentry/browser";
+import { Api } from "config/api";
+import appConfig from "config/setting";
+import { checkLogin } from "./auth";
+import { localStore, checkEmpty } from "./tool";
+import { loading, modalView, report } from "./plugin";
+import { codeText } from "config/codeText";
 
-const serverUrl = appConfig.zone[process.env.SERVER_TYPE].serverUrl;
+const serverType = process.env.SERVER_TYPE as string;
+const serverUrl = (appConfig.zone as { [key: string]: any })[serverType]
+  .serverUrl;
+
+interface LogSend {
+  requestName?: string;
+  requestApi?: string;
+  requestSource?: string;
+  requestParam?: object;
+  data?: object;
+  remarkMes?: string | object;
+  remarkCode?: string;
+  recorderName?: string;
+}
+
+interface LogCapture {
+  code?: string;
+  msg?: string;
+}
 
 export const clientLog = {
   projectInfo: { name: appConfig.name, version: appConfig.version },
-  send(param) {
+  send(param: LogSend) {
     let options = Object.assign(
       {
-        requestName: '',
-        requestApi: '',
+        requestName: "",
+        requestApi: "",
         requestSource: location.href,
         requestParam: {},
         data: {},
-        remarkMes: '',
-        remarkCode: '',
-        recorderName: 'developer'
+        remarkMes: "",
+        remarkCode: "",
+        recorderName: "developer",
       },
       param
     );
@@ -31,11 +49,11 @@ export const clientLog = {
       name: options.requestName,
       api: options.requestApi,
       source: options.requestSource,
-      param: options.requestParam
+      param: options.requestParam,
     };
     let _errorInfo = options.data;
     let _remarkInfo = { mes: options.remarkMes, code: options.remarkCode };
-    let _timeInfo = { time: moment().format('YYYY/MM/DD HH:mm:ss') };
+    let _timeInfo = { time: moment().format("YYYY/MM/DD HH:mm:ss") };
     let _recorder = { name: options.recorderName };
     let logData = {
       _projectInfo,
@@ -43,50 +61,78 @@ export const clientLog = {
       _errorInfo,
       _remarkInfo,
       _timeInfo,
-      _recorder
+      _recorder,
     };
     request(
       {
-        type: 'post',
+        type: "post",
         data: {
           message: options.requestName,
-          context: logData
+          context: logData,
         },
         loading: false,
         sendLog: false,
         toast: false,
-        warn: false
+        warn: false,
       },
       Api.clientLog
     );
   },
-  capture(param) {
+  capture(param: LogCapture) {
     let options = Object.assign(
       {
-        code: '',
-        msg: ''
+        code: "",
+        msg: "",
       },
       param
     );
     const { code, msg } = options;
     const logData = { ...this.projectInfo, code, msg };
-    if (process.env.SERVER_TYPE != 'prod') {
-      Sentry.captureMessage(JSON.stringify(logData), 'error'); // fatal, error, warning, info, debug
+    if (process.env.SERVER_TYPE != "prod") {
+      Sentry.captureMessage(JSON.stringify(logData), Sentry.Severity.Error); // fatal, error, warning, info, debug
     }
-  }
+  },
 };
 
-export const request = (param, options) => {
+interface ReqSet {
+  url?: string;
+  type?: string;
+  data?: object;
+  isDownload?: boolean;
+  downloadName?: string;
+  isUpload?: boolean;
+  warn?: boolean;
+  timeout?: number;
+  toast?: boolean;
+  loading?: boolean;
+  success?: (res: object) => void;
+  // callLogin?: boolean;
+  fail?: (err: object) => void;
+  error?: (err: object) => void;
+  unAuth?: () => void;
+  headers?: object;
+  sendLog?: boolean;
+  downloadJava?: boolean;
+}
+
+interface ReqOptionStruct {
+  method: string;
+  url?: string;
+  auth: boolean;
+  name: string;
+}
+
+export const request = (param: ReqSet, options: ReqOptionStruct) => {
   let reqTime = new Date().getTime();
   let resTime = 0;
   let isModalView = false;
   let reqOption = Object.assign(
     {
-      url: '',
+      url: "",
       type: options.method,
       data: {},
       isDownload: false,
-      downloadName: '',
+      downloadName: "",
       isUpload: false,
       warn: true,
       timeout: 60000,
@@ -98,177 +144,223 @@ export const request = (param, options) => {
       error: () => {}, // 接口失败
       unAuth: () => {}, // 未登錄callback
       headers: {},
-      // currentComponent: "",
-      sendLog: false
+      sendLog: false,
     },
     param
   );
 
   if (checkEmpty(reqOption.url)) {
     // 优先使用param传入的url
-    if (reqOption.url.indexOf('//') == -1) {
+    if (reqOption.url.indexOf("//") == -1) {
       reqOption.url = `${serverUrl}${reqOption.url}`;
     }
   } else {
     if (checkEmpty(options.url)) {
-      if (options.url.indexOf('//') == -1) {
+      if ((options.url as string).indexOf("//") == -1) {
         reqOption.url = `${serverUrl}${options.url}`;
       } else {
-        reqOption.url = options.url;
+        reqOption.url = options.url as string;
       }
     }
   }
 
   //reqOption.data.timeStamp = moment().format("YYYYMMDDHHmmss");
 
-  if (reqOption.type == 'get' || reqOption.type == 'GET') {
-    let paramStr = ''; // 拼接参数
-    Object.keys(reqOption.data).forEach(key => {
-      paramStr += key + '=' + reqOption.data[key] + '&';
-    });
-    if (paramStr !== '') {
-      paramStr = paramStr.substr(0, paramStr.lastIndexOf('&'));
-      reqOption.url = reqOption.url + '?' + paramStr;
+  if (reqOption.type == "get" || reqOption.type == "GET") {
+    // 需补充isUpload为true时不能使用get方式
+    let paramStr = ""; // 拼接参数
+
+    interface PayloadStruct {
+      [index: string]: string | number | (string | number | object)[];
     }
+
+    Object.keys(reqOption.data).forEach((key) => {
+      paramStr += key + "=" + (reqOption.data as PayloadStruct)[key] + "&";
+    });
+    if (paramStr !== "") {
+      paramStr = paramStr.substr(0, paramStr.lastIndexOf("&"));
+      reqOption.url = reqOption.url + "?" + paramStr;
+    }
+  }
+
+  interface HeadersStruct {
+    Accept?: string;
+    "Content-Type"?: string;
+    Authorization?: string;
   }
 
   let requestConfig = {
     //credentials: 'include',
     method: reqOption.type,
-    headers: {}
+    headers: {},
     // mode: "cors",
     // cache: "force-cache"
   };
 
   if (!reqOption.isUpload) {
     requestConfig.headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      ...reqOption.headers
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...reqOption.headers,
     };
   }
 
-  function setHeadToken(res) {
-    requestConfig.headers.Authorization = 'Bearer ' + res.bbtToken;
+  interface ResStruct {
+    bbtToken?: string;
+  }
+
+  function setHeadToken(res: ResStruct) {
+    (requestConfig.headers as HeadersStruct).Authorization =
+      "Bearer " + res.bbtToken;
   }
 
   checkLogin({
-    inLine: res => {
+    inLine: (res: ResStruct) => {
       setHeadToken(res);
-    }
+    },
   });
 
-  if (options.auth && !checkEmpty(requestConfig.headers.Authorization)) {
+  if (
+    options.auth &&
+    !checkEmpty((requestConfig.headers as HeadersStruct).Authorization)
+  ) {
     if (reqOption.warn && !isModalView) {
       modalView.confirm({
-        iconType: 'bookFail',
-        content: codeText['A002'],
-        okText: '登錄',
-        btnType: 'hideCancel',
+        iconType: "bookFail",
+        content: codeText["A002"],
+        okText: "登錄",
+        btnType: "hideCancel",
         onOk: () => {
           isModalView = true;
           // 去登录
-        }
+        },
       });
     }
     reqOption.unAuth && reqOption.unAuth();
-    return { fact: 'unauthorized' };
+    return { fact: "unauthorized" };
   }
 
-  if (reqOption.type == 'post' || reqOption.type == 'POST') {
-    let bodyData = null;
+  if (reqOption.type == "post" || reqOption.type == "POST") {
+    let bodyData: object | string | null = null;
     if (reqOption.isUpload) {
-      bodyData = new FormData();
-      Object.keys(reqOption.data).forEach(key => {
-        bodyData.append(key, reqOption.data[key]);
+      let formData = new FormData();
+      interface FormDataStruct {
+        [index: string]: string | Blob;
+      }
+      Object.keys(reqOption.data).forEach((key) => {
+        formData.append(key, (reqOption.data as FormDataStruct)[key]);
       });
     } else {
       bodyData = JSON.stringify(reqOption.data);
     }
-    Object.defineProperty(requestConfig, 'body', {
-      value: bodyData
+    Object.defineProperty(requestConfig, "body", {
+      value: bodyData,
     });
   }
 
-  function reqDone(hasRes, logData, processTime) {
+  function reqDone(
+    hasRes: boolean,
+    logData: object,
+    processTime: string | number
+  ) {
     reqOption.loading && loading.remove();
     if (hasRes) {
       // 有响应数据
       if (reqOption.sendLog) {
         clientLog.send({
-          requestName: 'webApi',
+          requestName: "webApi",
           requestParam: reqOption,
           data: logData,
           remarkMes: {
             reqConfig: requestConfig,
-            processTime: processTime + 's'
-          }
+            processTime: processTime + "s",
+          },
         });
       }
     } else {
       if (reqOption.sendLog) {
         clientLog.send({
-          requestName: 'webApi',
+          requestName: "webApi",
           requestParam: reqOption,
           data: logData,
-          remarkMes: { reqConfig: requestConfig, processTime: processTime }
+          remarkMes: { reqConfig: requestConfig, processTime: processTime },
         });
       }
     }
   }
 
   reqOption.loading && loading.create();
-
+  // interface ResponseStruct {
+  //   ok: boolean;
+  //   status: number;
+  //   statusText: string;
+  //   json: () => object;
+  //   blob: () => string;
+  // }
+  // interface ResDataStruct {
+  //   fact: string;
+  //   resData?: ResponseStruct;
+  //   httpCode?: number;
+  //   httpText?: string;
+  // }
   return Promise.race([
     fetch(reqOption.url, requestConfig)
-      .then(response => {
+      .then((response) => {
         if (response.ok) {
           // http code为200
-          return { fact: 'success', resData: response };
+          return {
+            fact: "success",
+            resData: response,
+            httpCode: response.status,
+            httpText: response.statusText,
+          };
         } else {
           return {
-            fact: 'error',
+            fact: "error",
+            resData: response,
             httpCode: response.status,
-            httpText: response.statusText
+            httpText: response.statusText,
           };
         }
       })
-      .then(res => {
-        if (res.fact == 'success') {
+      .then((res) => {
+        if (res.fact == "success") {
           return reqOption.isDownload ? res.resData.blob() : res.resData.json();
         } else {
           return res;
         }
       }),
-    new Promise(resolve => {
+    new Promise((resolve) => {
       // resolve, reject
-      setTimeout(() => resolve({ fact: 'timeout' }), reqOption.timeout);
-    }).then(res => {
+      setTimeout(() => resolve({ fact: "timeout" }), reqOption.timeout);
+    }).then((res) => {
       return res;
-    })
+    }),
   ])
-    .then(data => {
-      if (data.fact == 'timeout') {
+    .then((data) => {
+      if (data.fact == "timeout") {
         // 请求超時
         reqOption.error && reqOption.error(data);
         if (reqOption.toast) {
-          report.info(codeText['A001']);
+          report.info(codeText["A001"]);
         }
-        reqDone(false, { reqStatus: 'timeout' }, '-');
-      } else if (data.fact == 'error') {
+        reqDone(false, { reqStatus: "timeout" }, "-");
+      } else if (data.fact == "error") {
         // 请求异常
         reqOption.error && reqOption.error(data);
         if (reqOption.toast) {
-          report.info(options.name + ' error: ' + data.httpCode + '-' + data.httpText);
+          report.info(
+            options.name + " error: " + data.httpCode + "-" + data.httpText
+          );
         }
         reqDone(
           false,
           {
-            reqStatus: 'error',
+            reqStatus: "error",
             httpCode: data.httpCode,
-            httpText: data.httpText
+            httpText: data.httpText,
           },
-          '-'
+          "-"
         );
       } else {
         // 请求正常
@@ -287,27 +379,27 @@ export const request = (param, options) => {
             // 下載文件的接口沒有code視為請求成功
             // 是否是java接口下載
             const fileBlob = reqOption.downloadJava
-              ? new Blob([data], { type: 'text/pdf' })
+              ? new Blob([data], { type: "text/pdf" })
               : new Blob([data]); // new Blob([content], { type: 'text/csv' })
-            const fileName = reqOption.downloadName + '.pdf';
+            const fileName = reqOption.downloadName + ".pdf";
 
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
               // ie處理方法 提示用户是要保存文件还是直接打开文件
               window.navigator.msSaveOrOpenBlob(fileBlob, fileName);
             } else {
-              let elink = document.createElement('a');
+              let elink = document.createElement("a");
               elink.download = fileName;
-              elink.style.display = 'none';
+              elink.style.display = "none";
               elink.href = URL.createObjectURL(fileBlob);
               document.body.appendChild(elink);
               elink.click();
               document.body.removeChild(elink);
             }
-            reqDone(true, { data: 'invoice' }, processTime);
+            reqDone(true, { data: "invoice" }, processTime);
           } else {
             reqOption.fail && reqOption.fail(data);
             if (reqOption.toast) {
-              report.info(data.msg || codeText['A003']);
+              report.info(data.msg || codeText["A003"]);
             }
             reqDone(true, data, processTime);
           }
@@ -315,14 +407,14 @@ export const request = (param, options) => {
       }
       return data;
     })
-    .catch(err => {
+    .catch((err) => {
       // bbtLog.info(err, "-------- request catch");
-      let errData = { fact: 'failed', err: err };
+      let errData = { fact: "failed", err: err };
       if (reqOption.toast) {
-        report.info(options.name + ' errorCatch: failed');
+        report.info(options.name + " errorCatch: failed");
       }
       reqOption.error && reqOption.error(errData);
-      reqDone(false, { reqStatus: 'failed' }, '-');
+      reqDone(false, { reqStatus: "failed" }, "-");
       return errData;
     });
 };

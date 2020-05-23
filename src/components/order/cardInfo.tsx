@@ -44,6 +44,6 @@ class CardInfo extends React.Component {
   }
 }
 
-CardInfo.propTypes = {};
+// CardInfo.propTypes = {};
 
 export default CardInfo;

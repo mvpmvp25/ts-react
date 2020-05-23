@@ -36,7 +36,7 @@ function LoadingComponent(props: PropsInfo) {
 
 // 路由生成
 const routeFiles = require.context("routes", true, /\.tsx$/).keys();
-export const routeList = routeFiles.map(item => {
+export const routeList = routeFiles.map((item) => {
   // ./xx/xxx.js
   let _path = item.replace(/\.tsx|\./g, "");
   let isHomePath = _path == appConfig.indexPath;
@@ -48,31 +48,38 @@ export const routeList = routeFiles.map(item => {
     loader: () => import("../routes" + _path),
     loading: LoadingComponent,
     // delay: 200,
-    timeout: appConfig.routeTimeout
+    timeout: appConfig.routeTimeout,
   });
   let routeInfo = { path: visitPath, component: _component };
   return routeInfo;
 });
 
+export interface MenuInfo {
+  navText: string;
+}
+
 // 获取面包屑文案
-export const getBreadcrumb = (key: string): object[] => {
+export const getBreadcrumb = (key: string): MenuInfo[] => {
   interface Menulist {
-    [index: string]: object[];
+    [index: string]: MenuInfo[];
   }
   let allMenuInfo: Menulist = {};
   // let allMenuInfo: object;
-  appConfig.leftMenuList.forEach(item => {
-    item.menu.forEach(v => {
+  appConfig.leftMenuList.forEach((item) => {
+    item.menu.forEach((v) => {
       allMenuInfo[`/${item.navKey}/${v.key}`] = [
         {
-          navText: item.navName
+          navText: item.navName,
         },
         {
-          navText: v.name
-        }
+          navText: v.name,
+        },
       ];
     });
   });
+  if (allMenuInfo[key] === undefined) {
+    console.info(`请先在appConfig.leftMenuList中增加${key}对应的配置`);
+  }
   return allMenuInfo[key];
 };
 
@@ -107,7 +114,7 @@ export const pageView = {
   goBack() {
     appHistory.goBack();
     // this.rollTop();
-  }
+  },
   // barOpen(info) {
   //   if (info.type == 0) { // 外鏈
   //     window.open(info.url);
