@@ -39,7 +39,7 @@ const routeFiles = require.context("routes", true, /\.tsx$/).keys();
 export const routeList = routeFiles.map((item) => {
   // ./xx/xxx.js
   let _path = item.replace(/\.tsx|\./g, "");
-  const isHomePath = _path == appConfig.indexPath;
+  const isHomePath = _path === appConfig.indexPath;
   const isExclude = appConfig.routeExclude.includes(_path);
   const visitPath = isHomePath ? "/" : _path;
   _path = isExclude ? appConfig.indexPath : _path; // 访问忽略的路由显示首页
@@ -116,9 +116,9 @@ export const pageView = {
     // this.rollTop();
   },
   // barOpen(info) {
-  //   if (info.type == 0) { // 外鏈
+  //   if (info.type === 0) { // 外鏈
   //     window.open(info.url);
-  //   } else if (info.type == 1) { // 內鏈
+  //   } else if (info.type === 1) { // 內鏈
   //     let theRoute = BBT_ARTICLE_ROUTE[info.articleType];
   //     this.go(theRoute + "?id=" + info.articleId + "&title=" + info.title);
   //   }

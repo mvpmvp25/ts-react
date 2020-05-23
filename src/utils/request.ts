@@ -9,8 +9,7 @@ import { loading, modalView, report } from "./plugin";
 import { codeText } from "config/codeText";
 
 const serverType = process.env.SERVER_TYPE as string;
-const serverUrl = (appConfig.zone as { [key: string]: any })[serverType]
-  .serverUrl;
+const serverUrl = (appConfig.zone as { [key: string]: any })[serverType].serverUrl;
 
 interface LogSend {
   requestName?: string;
@@ -32,14 +31,14 @@ export const clientLog = {
   projectInfo: { name: appConfig.name, version: appConfig.version },
   send(param: LogSend) {
     const options = {
-        requestName: "",
-        requestApi: "",
-        requestSource: location.href,
-        requestParam: {},
-        data: {},
-        remarkMes: "",
-        remarkCode: "",
-        recorderName: "developer",
+      requestName: "",
+      requestApi: "",
+      requestSource: location.href,
+      requestParam: {},
+      data: {},
+      remarkMes: "",
+      remarkCode: "",
+      recorderName: "developer",
       ...param
     };
     const _projectInfo = this.projectInfo;
@@ -47,7 +46,7 @@ export const clientLog = {
       name: options.requestName,
       api: options.requestApi,
       source: options.requestSource,
-      param: options.requestParam,
+      param: options.requestParam
     };
     const _errorInfo = options.data;
     const _remarkInfo = { mes: options.remarkMes, code: options.remarkCode };
@@ -59,35 +58,35 @@ export const clientLog = {
       _errorInfo,
       _remarkInfo,
       _timeInfo,
-      _recorder,
+      _recorder
     };
     request(
       {
         type: "post",
         data: {
           message: options.requestName,
-          context: logData,
+          context: logData
         },
         loading: false,
         sendLog: false,
         toast: false,
-        warn: false,
+        warn: false
       },
       Api.clientLog
     );
   },
   capture(param: LogCapture) {
     const options = {
-        code: "",
-        msg: "",
+      code: "",
+      msg: "",
       ...param
     };
     const { code, msg } = options;
     const logData = { ...this.projectInfo, code, msg };
-    if (process.env.SERVER_TYPE != "prod") {
+    if (process.env.SERVER_TYPE !== "prod") {
       Sentry.captureMessage(JSON.stringify(logData), Sentry.Severity.Error); // fatal, error, warning, info, debug
     }
-  },
+  }
 };
 
 interface ReqSet {
@@ -123,34 +122,34 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
   let resTime = 0;
   let isModalView = false;
   const reqOption = {
-      url: "",
-      type: options.method,
-      data: {},
-      isDownload: false,
-      downloadName: "",
-      isUpload: false,
-      warn: true,
-      timeout: 60000,
-      toast: true,
-      loading: true,
-      success: () => {},
-      // callLogin: true,
-      fail: () => {}, // 业务失败
-      error: () => {}, // 接口失败
-      unAuth: () => {}, // 未登錄callback
-      headers: {},
-      sendLog: false,
+    url: "",
+    type: options.method,
+    data: {},
+    isDownload: false,
+    downloadName: "",
+    isUpload: false,
+    warn: true,
+    timeout: 60000,
+    toast: true,
+    loading: true,
+    success: () => {},
+    // callLogin: true,
+    fail: () => {}, // 业务失败
+    error: () => {}, // 接口失败
+    unAuth: () => {}, // 未登錄callback
+    headers: {},
+    sendLog: false,
     ...param
   };
 
   if (checkEmpty(reqOption.url)) {
     // 优先使用param传入的url
-    if (reqOption.url.indexOf("//") == -1) {
+    if (reqOption.url.indexOf("//") === -1) {
       reqOption.url = `${serverUrl}${reqOption.url}`;
     }
   } else {
     if (checkEmpty(options.url)) {
-      if ((options.url as string).indexOf("//") == -1) {
+      if ((options.url as string).indexOf("//") === -1) {
         reqOption.url = `${serverUrl}${options.url}`;
       } else {
         reqOption.url = options.url as string;
@@ -160,7 +159,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
 
   // reqOption.data.timeStamp = moment().format("YYYYMMDDHHmmss");
 
-  if (reqOption.type == "get" || reqOption.type == "GET") {
+  if (reqOption.type === "get" || reqOption.type === "GET") {
     // 需补充isUpload为true时不能使用get方式
     let paramStr = ""; // 拼接参数
 
@@ -168,7 +167,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
       [index: string]: string | number | (string | number | object)[];
     }
 
-    Object.keys(reqOption.data).forEach((key) => {
+    Object.keys(reqOption.data).forEach(key => {
       paramStr += key + "=" + (reqOption.data as PayloadStruct)[key] + "&";
     });
     if (paramStr !== "") {
@@ -186,7 +185,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
   const requestConfig = {
     // credentials: 'include',
     method: reqOption.type,
-    headers: {},
+    headers: {}
     // mode: "cors",
     // cache: "force-cache"
   };
@@ -195,7 +194,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
     requestConfig.headers = {
       Accept: "application/json",
       "Content-Type": "application/json",
-      ...reqOption.headers,
+      ...reqOption.headers
     };
   }
 
@@ -204,20 +203,16 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
   }
 
   function setHeadToken(res: ResStruct) {
-    (requestConfig.headers as HeadersStruct).Authorization =
-      "Bearer " + res.bbtToken;
+    (requestConfig.headers as HeadersStruct).Authorization = "Bearer " + res.bbtToken;
   }
 
   checkLogin({
     inLine: (res: ResStruct) => {
       setHeadToken(res);
-    },
+    }
   });
 
-  if (
-    options.auth &&
-    !checkEmpty((requestConfig.headers as HeadersStruct).Authorization)
-  ) {
+  if (options.auth && !checkEmpty((requestConfig.headers as HeadersStruct).Authorization)) {
     if (reqOption.warn && !isModalView) {
       modalView.confirm({
         iconType: "bookFail",
@@ -227,37 +222,33 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
         onOk: () => {
           isModalView = true;
           // 去登录
-        },
+        }
       });
     }
-    reqOption.unAuth && reqOption.unAuth();
+    reqOption.unAuth();
     return { fact: "unauthorized" };
   }
 
-  if (reqOption.type == "post" || reqOption.type == "POST") {
+  if (reqOption.type === "post" || reqOption.type === "POST") {
     let bodyData: object | string | null = null;
     if (reqOption.isUpload) {
       const formData = new FormData();
       interface FormDataStruct {
         [index: string]: string | Blob;
       }
-      Object.keys(reqOption.data).forEach((key) => {
+      Object.keys(reqOption.data).forEach(key => {
         formData.append(key, (reqOption.data as FormDataStruct)[key]);
       });
     } else {
       bodyData = JSON.stringify(reqOption.data);
     }
     Object.defineProperty(requestConfig, "body", {
-      value: bodyData,
+      value: bodyData
     });
   }
 
-  function reqDone(
-    hasRes: boolean,
-    logData: object,
-    processTime: string | number
-  ) {
-    reqOption.loading && loading.remove();
+  function reqDone(hasRes: boolean, logData: object, processTime: string | number) {
+    if (reqOption.loading) loading.remove();
     if (hasRes) {
       // 有响应数据
       if (reqOption.sendLog) {
@@ -267,8 +258,8 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
           data: logData,
           remarkMes: {
             reqConfig: requestConfig,
-            processTime: processTime + "s",
-          },
+            processTime: processTime + "s"
+          }
         });
       }
     } else {
@@ -277,13 +268,13 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
           requestName: "webApi",
           requestParam: reqOption,
           data: logData,
-          remarkMes: { reqConfig: requestConfig, processTime },
+          remarkMes: { reqConfig: requestConfig, processTime }
         });
       }
     }
   }
 
-  reqOption.loading && loading.create();
+  if (reqOption.loading) loading.create();
   // interface ResponseStruct {
   //   ok: boolean;
   //   status: number;
@@ -299,60 +290,58 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
   // }
   return Promise.race([
     fetch(reqOption.url, requestConfig)
-      .then((response) => {
+      .then(response => {
         if (response.ok) {
           // http code为200
           return {
             fact: "success",
             resData: response,
             httpCode: response.status,
-            httpText: response.statusText,
+            httpText: response.statusText
           };
         } else {
           return {
             fact: "error",
             resData: response,
             httpCode: response.status,
-            httpText: response.statusText,
+            httpText: response.statusText
           };
         }
       })
-      .then((res) => {
-        if (res.fact == "success") {
+      .then(res => {
+        if (res.fact === "success") {
           return reqOption.isDownload ? res.resData.blob() : res.resData.json();
         } else {
           return res;
         }
       }),
-    new Promise((resolve) => {
+    new Promise(resolve => {
       // resolve, reject
       setTimeout(() => resolve({ fact: "timeout" }), reqOption.timeout);
-    }).then((res) => {
+    }).then(res => {
       return res;
-    }),
+    })
   ])
-    .then((data) => {
-      if (data.fact == "timeout") {
+    .then(data => {
+      if (data.fact === "timeout") {
         // 请求超時
-        reqOption.error && reqOption.error(data);
+        reqOption.error(data);
         if (reqOption.toast) {
           report.info(codeText.A001);
         }
         reqDone(false, { reqStatus: "timeout" }, "-");
-      } else if (data.fact == "error") {
+      } else if (data.fact === "error") {
         // 请求异常
-        reqOption.error && reqOption.error(data);
+        reqOption.error(data);
         if (reqOption.toast) {
-          report.info(
-            options.name + " error: " + data.httpCode + "-" + data.httpText
-          );
+          report.info(options.name + " error: " + data.httpCode + "-" + data.httpText);
         }
         reqDone(
           false,
           {
             reqStatus: "error",
             httpCode: data.httpCode,
-            httpText: data.httpText,
+            httpText: data.httpText
           },
           "-"
         );
@@ -360,13 +349,13 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
         // 请求正常
         resTime = new Date().getTime();
         const processTime = (resTime - reqTime) / 1000;
-        if (data.code == 200008) {
+        if (data.code === 200008) {
           // token无效 但是這種情況後端返回http code不是200
           localStore.clearLogin();
           // 去登录
           reqDone(true, data, processTime);
-        } else if (data.code == 0) {
-          reqOption.success && reqOption.success(data);
+        } else if (data.code === 0) {
+          reqOption.success(data);
           reqDone(true, data, processTime);
         } else {
           if (reqOption.isDownload) {
@@ -391,7 +380,7 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
             }
             reqDone(true, { data: "invoice" }, processTime);
           } else {
-            reqOption.fail && reqOption.fail(data);
+            reqOption.fail(data);
             if (reqOption.toast) {
               report.info(data.msg || codeText.A003);
             }
@@ -401,13 +390,13 @@ export const request = (param: ReqSet, options: ReqOptionStruct) => {
       }
       return data;
     })
-    .catch((err) => {
+    .catch(err => {
       // bbtLog.info(err, "-------- request catch");
       const errData = { fact: "failed", err };
       if (reqOption.toast) {
         report.info(options.name + " errorCatch: failed");
       }
-      reqOption.error && reqOption.error(errData);
+      reqOption.error(errData);
       reqDone(false, { reqStatus: "failed" }, "-");
       return errData;
     });

@@ -3,22 +3,22 @@ import Immutable from "immutable";
 // 判断值是否为空 有值返回ture，否则返回false
 export const checkEmpty = (data: any) => {
   if (data instanceof Array) {
-    if (data.length == 0) {
+    if (data.length === 0) {
       return false;
     } else {
       return true;
     }
   } else if (data instanceof Object) {
-    if (JSON.stringify(data) == "{}") {
+    if (JSON.stringify(data) === "{}") {
       return false;
     } else {
       return true;
     }
   } else {
-    if (data != "" && data != null && data != undefined) {
+    if (data !== "" && data !== null && data !== undefined) {
       // NaN返回true
       return true;
-    } else if (data == 0 && typeof data == "number") {
+    } else if (data === 0 && typeof data === "number") {
       return true;
     } else {
       return false;
@@ -50,7 +50,7 @@ export const localStore = {
       ...param
     };
     if (checkEmpty(options.value)) {
-      if (typeof options.value == "object") {
+      if (typeof options.value === "object") {
         localStorage.setItem(options.name, JSON.stringify(options.value));
       } else {
         localStorage.setItem(options.name, options.value);
@@ -87,7 +87,7 @@ export const localStore = {
       ...param
     };
     if (checkEmpty(options.value)) {
-      if (typeof options.value == "object") {
+      if (typeof options.value === "object") {
         sessionStorage.setItem(options.name, JSON.stringify(options.value));
       } else {
         sessionStorage.setItem(options.name, options.value);

@@ -7,8 +7,8 @@ interface CheckLoginStruct {
 
 export const checkLogin = (param: CheckLoginStruct) => {
   const options = {
-      inLine: () => {},
-      offLine: () => {},
+    inLine: () => {},
+    offLine: () => {},
     ...param
   };
   const tokenInfo = localStore.read({ name: "tokenInfo", none: {} });

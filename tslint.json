@@ -3,6 +3,13 @@
   "extends": ["tslint:latest", "tslint-react", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
-    "no-console": true
+    "no-console": ["error", { "allow": ["info"] }],
+    "no-empty": false,
+    "jsx-no-bind": false,
+    "jsx-no-lambda": false,
+    "max-classes-per-file": false,
+    "no-submodule-imports": false,
+    "no-implicit-dependencies": false,
+    "prefer-conditional-expression": false
   }
 }

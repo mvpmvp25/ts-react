@@ -20,7 +20,6 @@ function RouterConfig() {
       <BasicLayout>
         <Switch>
           {routeList.map((item: RouteData, index: number) => {
-            // console.log(item.component)
             return (
               <Route
                 key={index}

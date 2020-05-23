@@ -6,7 +6,7 @@ const webpack = require("webpack");
 const tsImportPluginFactory = require("ts-import-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-const isLocal = process.env.SERVER_TYPE == "local";
+const isLocal = process.env.SERVER_TYPE === "local";
 
 module.exports = {
   entry: "./src/index.tsx",

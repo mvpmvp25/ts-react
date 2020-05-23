@@ -14,12 +14,12 @@ interface IconInfoStruct {
 }
 
 const iconInfo: IconInfoStruct = {
-  notification: HomeOutlined,
+  notification: HomeOutlined
   // setting: SettingFilled
 };
 
 const {
-  location: { pathname },
+  location: { pathname }
 } = appHistory;
 
 interface RootStateStruct {
@@ -44,10 +44,10 @@ const myReducer = (
   }
 };
 
-const selected = pathname == "/" ? appConfig.indexPath : pathname;
+const _selected = pathname === "/" ? appConfig.indexPath : pathname;
 const rootState: RootStateStruct = {
-  selected,
-  openKeys: [selected.split("/")[1]],
+  selected: _selected,
+  openKeys: [_selected.split("/")[1]]
 };
 const rootRecord = dataCenter.create<RootStateStruct>(rootState);
 const AppContext = React.createContext(rootRecord);
@@ -68,7 +68,7 @@ const MainLayout = (props: MainPropsStruct) => {
   }
   const selectMenu = (e: SelectMenuStruct) => {
     dispatch({ type: "save", payload: { selected: e.key } });
-    const routePath = e.key == appConfig.indexPath ? "/" : e.key;
+    const routePath = e.key === appConfig.indexPath ? "/" : e.key;
     pageView.go(routePath);
   };
 
@@ -134,12 +134,8 @@ const MainLayout = (props: MainPropsStruct) => {
                     </span>
                   }
                 >
-                  {item.menu.map((v) => {
-                    return (
-                      <Menu.Item key={`/${item.navKey}/${v.key}`}>
-                        {v.name}
-                      </Menu.Item>
-                    );
+                  {item.menu.map(v => {
+                    return <Menu.Item key={`/${item.navKey}/${v.key}`}>{v.name}</Menu.Item>;
                   })}
                 </SubMenu>
               );
@@ -149,16 +145,10 @@ const MainLayout = (props: MainPropsStruct) => {
         <Layout style={{ padding: "0 24px 24px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
             {getBreadcrumb(selected).map((item: MenuInfo, index: number) => {
-              item;
-              return (
-                <Breadcrumb.Item key={index}>{item.navText}</Breadcrumb.Item>
-              );
+              return <Breadcrumb.Item key={index}>{item.navText}</Breadcrumb.Item>;
             })}
           </Breadcrumb>
-
-          <Content style={{ padding: 24, margin: 0, minHeight: 280 }}>
-            {props.children}
-          </Content>
+          <Content style={{ padding: 24, margin: 0, minHeight: 280 }}>{props.children}</Content>
         </Layout>
       </Layout>
     </Layout>
@@ -167,7 +157,7 @@ const MainLayout = (props: MainPropsStruct) => {
 
 MainLayout.propTypes = {
   dispatch: PropTypes.func.isRequired, // array bool func number object string
-  children: PropTypes.object.isRequired,
+  children: PropTypes.object.isRequired
 };
 
 // const Messages = () => {
@@ -188,7 +178,6 @@ function BasicLayout(props: BasicPropsStruct) {
   // const basicState = {
   //   ...rootState,
   // };
-  console.log(rootRecord, "----------");
   const [state, dispatch] = useReducer(myReducer, rootRecord);
   const basicProps = { dispatch };
   return (
@@ -202,7 +191,7 @@ function BasicLayout(props: BasicPropsStruct) {
 }
 
 BasicLayout.propTypes = {
-  children: PropTypes.object.isRequired,
+  children: PropTypes.object.isRequired
 };
 
 export default BasicLayout;

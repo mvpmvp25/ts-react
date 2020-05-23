@@ -4,7 +4,7 @@ import appConfig from "config/setting";
 import { checkEmpty } from "./tool";
 
 // loading
-class loadPop {
+class LoadPop {
   private pop: HTMLElement | null;
   private noop: () => void;
   private popNum: number;
@@ -33,7 +33,7 @@ class loadPop {
     cb = cb || this.noop;
     if (this.pop) {
       this.popNum = this.popNum - 1;
-      if (this.popNum == 0) {
+      if (this.popNum === 0) {
         document.body.removeChild(this.pop);
         this.pop = null;
         cb();
@@ -42,9 +42,9 @@ class loadPop {
   }
 }
 
-export const loading = new loadPop();
+export const loading = new LoadPop();
 
-class loginView {
+class LoginView {
   private loginPopupEle: HTMLElement | null;
   private ssoTask: number | null;
   private loginMaskEle: HTMLElement | null;
@@ -75,10 +75,7 @@ class loginView {
       "</div>" +
       "</div>" +
       "</section>";
-    (document.querySelector("body") as HTMLBodyElement).insertAdjacentHTML(
-      "beforeend",
-      pageHtml
-    );
+    (document.querySelector("body") as HTMLBodyElement).insertAdjacentHTML("beforeend", pageHtml);
     this.loginPopupEle = document.querySelector("#loginPopup");
     this.loginMaskEle = document.querySelector(".login-mask");
     this.loginContentEle = document.querySelector(".login-content");
@@ -98,7 +95,7 @@ class loginView {
   }
 
   close() {
-    this.ssoTask && clearInterval(this.ssoTask);
+    clearInterval(this.ssoTask);
     (this.loginMaskEle as HTMLElement).classList.remove("popup-fadeEnter");
     (this.loginMaskEle as HTMLElement).classList.add("popup-fadeOut");
     (this.loginContentEle as HTMLElement).classList.remove("popup-fadeInUp");
@@ -114,7 +111,7 @@ class loginView {
   }
 }
 
-export const ssoLogin = new loginView();
+export const ssoLogin = new LoginView();
 
 interface ModalInfoStruct {
   icon?: object;
@@ -141,10 +138,10 @@ interface ModalConfirmStruct {
 export const modalView = {
   info: (param: ModalInfoStruct) => {
     const options = {
-        icon: <img src="/static/icon/notice-big.svg" />,
-        okText: "確認",
-        content: "",
-        onOk: () => {},
+      icon: <img src="/static/icon/notice-big.svg" />,
+      okText: "確認",
+      content: "",
+      onOk: () => {},
       ...param
     };
     Modal.info({
@@ -156,7 +153,7 @@ export const modalView = {
       content: options.content,
       centered: true,
       onOk: close => {
-        options.onOk && options.onOk();
+        options.onOk();
         close();
       }
     });
@@ -167,20 +164,20 @@ export const modalView = {
       return;
     }
     const options = {
-        className: "g-bbt-confirm",
-        iconType: "", // fail
-        btnType: "",
-        okText: "OK",
-        title: "",
-        content: "",
-        tips: "",
-        onOk: () => {},
-        cancelText: "cancel",
-        onCancel: () => {},
+      className: "g-bbt-confirm",
+      iconType: "", // fail
+      btnType: "",
+      okText: "OK",
+      title: "",
+      content: "",
+      tips: "",
+      onOk: () => {},
+      cancelText: "cancel",
+      onCancel: () => {},
       ...param
     };
     let confirmClass = options.className;
-    if (options.btnType == "hideOk" || options.btnType == "hideCancel") {
+    if (options.btnType === "hideOk" || options.btnType === "hideCancel") {
       confirmClass = options.className + " " + options.btnType;
     }
     let icon = null;
@@ -199,24 +196,18 @@ export const modalView = {
       content: (
         <div className="bbt-content">
           <div className="bbt-icon">{icon}</div>
-          <div className={checkEmpty(options.title) ? "bbt-title" : "none"}>
-            {options.title}
-          </div>
-          <div className={checkEmpty(options.content) ? "bbt-text" : "none"}>
-            {options.content}
-          </div>
-          <div className={checkEmpty(options.tips) ? "bbt-tips" : "none"}>
-            {options.tips}
-          </div>
+          <div className={checkEmpty(options.title) ? "bbt-title" : "none"}>{options.title}</div>
+          <div className={checkEmpty(options.content) ? "bbt-text" : "none"}>{options.content}</div>
+          <div className={checkEmpty(options.tips) ? "bbt-tips" : "none"}>{options.tips}</div>
         </div>
       ),
       onOk: close => {
-        options.onOk && options.onOk();
+        options.onOk();
         modalView.isConfirm = false;
         close();
       },
       onCancel: close => {
-        options.onCancel && options.onCancel();
+        options.onCancel();
         modalView.isConfirm = false;
         close();
       }
