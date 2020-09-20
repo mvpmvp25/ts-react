@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Form, Row, Col, Input, Button, DatePicker } from "antd";
+// import Form from "antd/es/form";
+// import "antd/es/form/style/css";
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
 import { checkEmpty, propsBaseStruct, dataCenter } from "utils/tool";
 
